@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Data Preprocessing’s documentation! &mdash; Data Preprocessing V0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Data Preprocessing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Welcome to Data Preprocessing’s documentation!</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Data Preprocessing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to Data Preprocessing’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-data-preprocessing-s-documentation">
+<h1>Welcome to Data Preprocessing’s documentation!<a class="headerlink" href="#welcome-to-data-preprocessing-s-documentation" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="Preprocess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Preprocess</span></span><a class="headerlink" href="#Preprocess" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>This class is used to perform basic data processing by means of different specific functions.</p>
+<blockquote>
+<div><dl class="py method">
+<dt class="sig sig-object py" id="view_nan_table">
+<span class="sig-name descname"><span class="pre">view_nan_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#view_nan_table" title="Permalink to this definition"></a></dt>
+<dd><p>This method is used to generate and view a NaN table. It contains the number of missing values and the percentage of them for each column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>dataframe</em>) – The dataframe from where the missing values will be extracted</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The NaN table</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="view_nan_graph">
+<span class="sig-name descname"><span class="pre">view_nan_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#view_nan_graph" title="Permalink to this definition"></a></dt>
+<dd><p>This method is used to graph the missing values of a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table_nan</strong> (<em>dataframe</em>) – The NaN table obtained from the view_table_nan() method</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>NaN barplot</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="drop_column">
+<span class="sig-name descname"><span class="pre">drop_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#drop_column" title="Permalink to this definition"></a></dt>
+<dd><p>This method will be used to drop one or more columns from a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>dataframe</em>) – The dataframe from where one or more columns will be deleted.</p></li>
+<li><p><strong>column_list</strong> (<em>list</em>) – Column or list of columns that will be deleted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inplace_missings">
+<span class="sig-name descname"><span class="pre">inplace_missings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inplace_missings" title="Permalink to this definition"></a></dt>
+<dd><p>This method inplaces missing values of a given table with the method wanted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>dataframe</em>) – The table where the missing values will be filled</p></li>
+<li><p><strong>column</strong> (<em>str</em>) – Column of the df to inplace missing values</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – The method that will be used to inplace the missing values</p></li>
+<li><p><strong>n_neighbors</strong> (<em>int</em>) – Only used if the method chosen is KNN to inplace missings</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe with the missing values replaced</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="outlier_detection">
+<span class="sig-name descname"><span class="pre">outlier_detection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#outlier_detection" title="Permalink to this definition"></a></dt>
+<dd><p>This method will be used to plot and detect outliers from one or more columns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>dataframe</em>) – The dataframe from where the outliers will be graphed and detected</p></li>
+<li><p><strong>column_list</strong> (<em>list</em>) – Column or list of columns from where the outliers will be graphed and detected</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Boxplot</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div></blockquote>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Nerea Zuaznabar &amp; Gabriela Ybarra.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
