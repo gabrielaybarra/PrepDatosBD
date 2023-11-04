@@ -29,12 +29,12 @@ class Preprocess:
         """
         try:
             if tipo_var not in ['num', 'cat']:
-                raise ValueError("El tipo de variable debe ser 'num' para variables numéricas o 'cat' para variables categóricas.")
+                raise ValueError("Variable type muste be 'num' for numerical variables and 'cat' for categorical variables")
             
             if tipo_var == 'num':
                 for variable in variables:
                     if self.df[variable].dtype not in ['int64', 'float64']:
-                        raise TypeError(f"La variable '{variable}' no es numérica.")
+                        raise TypeError(f"The variable '{variable}' is not numeric.")
                 
                 data = []
                 for variable in variables:
@@ -59,7 +59,7 @@ class Preprocess:
             elif tipo_var == 'cat':
                 for variable in variables:
                     if self.df[variable].dtype not in ['object', 'category']:
-                        raise TypeError(f"La variable '{variable}' no es categórica.")
+                        raise TypeError(f"The variable '{variable}' is not categorical.")
                 
                 cat_data = []
                 for variable in variables:
@@ -186,7 +186,7 @@ class Preprocess:
             print("Error: Invalid value detected. Please check the data.")
             
         except Exception as e:
-            print(f"Error desconocido: {e}")
+            print(f"Unkown error: {e}")
 
         return self.df
 
