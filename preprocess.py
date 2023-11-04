@@ -223,7 +223,7 @@ class Read_Preprocess(Preprocess):
                 columns = next(data)
                 self.df = pd.DataFrame(data, columns=columns)
             except InvalidFileException:
-                self.df = pd.read_excel(path, engine='xlrd')
+                raise Exception("Invalid File Exception. Please check the file.")
         
         elif extension == 'xml':
             try:
@@ -236,7 +236,7 @@ class Read_Preprocess(Preprocess):
                 data = data[1:]
                 self.df = pd.DataFrame(data, columns=columns)
             except ET.ParseError:
-                raise ValueError("El archivo XML no contiene datos en formato tabular")
+                raise ValueError("XML file does not contain data in tabular format.")
         
         elif extension == 'h5':
             self.df = pd.read_hdf(path)
@@ -245,10 +245,10 @@ class Read_Preprocess(Preprocess):
             try:
                 self.df = pd.read_csv(path, sep='\t')
             except pd.errors.ParserError:
-                raise ValueError("El archivo txt no contiene datos en formato tabular")
+                raise ValueError("txt file does not contain data in tabular format.")
 
         else:
-            raise ValueError("Extensión de archivo no compatible")
+            raise ValueError("File extension not compatible.")
         
         return self.df
 
