@@ -12,6 +12,72 @@ import numpy as np
 
 class Preprocess():
 
+    def describe_var(df, variables, tipo_var):
+
+        """This method will be used to describe one or more columns from a dataframe. 
+        The description will be: Count, min, pct 25, mean, median, pct 75, max, std, NaN count and not NaN count
+
+        :param dataframe df: The dataframe from where one or more columns will be described
+        :param list variables: Column or list of columns that will be described
+        :param str tipo_var: Type of columns that will be described, it manages to options, "cat" or "num"
+
+        :returns: dataframe
+
+        :rtype: dataframe
+        """
+        try:
+            if tipo_var not in ['num', 'cat']:
+                raise ValueError("El tipo de variable debe ser 'num' para variables numéricas o 'cat' para variables categóricas.")
+            
+            if tipo_var == 'num':
+                for variable in variables:
+                    if df[variable].dtype not in ['int64', 'float64']:
+                        raise TypeError(f"La variable '{variable}' no es numérica.")
+                
+                data = []
+                for variable in variables:
+                    count = df[variable].count()
+                    min_val = df[variable].min()
+                    pct25 = np.nanpercentile(df[variable], 25)
+                    mean = df[variable].mean()
+                    median = df[variable].median()
+                    pct75 = np.nanpercentile(df[variable], 75)
+                    max_val = df[variable].max()
+                    std_dev = df[variable].std()
+                    na_count = df[variable].isna().sum()
+                    notna_count = df[variable].notna().sum()
+
+                    data.append([
+                        count, min_val, pct25, mean, median, pct75, max_val, std_dev, na_count, notna_count
+                    ])
+
+                result_df = pd.DataFrame(data, columns=['Count', 'Min', '25th Percentile', 'Mean', 'Median', '75th Percentile', 'Max', 'Std Dev', 'NA Count', 'Not NA Count'], index=variables)
+                return result_df.T
+            
+            elif tipo_var == 'cat':
+                for variable in variables:
+                    if df[variable].dtype not in ['object', 'category']:
+                        raise TypeError(f"La variable '{variable}' no es categórica.")
+                
+                cat_data = []
+                for variable in variables:
+                    count = df[variable].count()
+                    mode_val = df[variable].mode().iloc[0]
+                    mode_freq = df[variable].value_counts().iloc[0]
+                    mode_percentage = (mode_freq / count) * 100
+                    unique_categories = df[variable].nunique()
+
+                    cat_data.append([
+                        count, unique_categories, mode_val, mode_freq, mode_percentage
+                    ])
+
+                cat_result_df = pd.DataFrame(cat_data, columns=['Count', 'Unique Categories', 'Mode', 'Mode Frequency', 'Mode Percentage'], index=variables)
+                return cat_result_df.T
+        
+        except (ValueError, TypeError) as e:
+            return str(e)
+        
+       
     def view_nan_table(df):
 
         """This method is used to generate and view a NaN table. It contains the number of missing values and the percentage of them for each column.
@@ -24,7 +90,6 @@ class Preprocess():
         """
     
         try:
-            # Verifica si df es un DataFrame de pandas
             if not isinstance(df, pd.DataFrame):
                 raise TypeError("Invalid input: 'df' must be a pandas DataFrame.")
 
@@ -45,42 +110,6 @@ class Preprocess():
         except Exception as e:
             print(f"Unkown error: {e}")
     
-
-    def view_nan_graph(tabla_nan):
-
-        """This method is used to graph the missing values of a dataframe.
-
-            :param dataframe table_nan: The NaN table obtained from the view_table_nan() method
-
-            :returns: NaN barplot
-
-            :rtype: dataframe
-        """
-
-        try:
-            # Verifica si tabla_nan es un DataFrame de pandas
-            if not isinstance(tabla_nan, pd.DataFrame):
-                raise TypeError("Invalid input: 'tabla_nan' must be a pandas DataFrame.")
-
-            # Verifica si hay al menos una columna en el DataFrame
-            if len(tabla_nan.columns) == 0:
-                raise ValueError("Invalid input: 'tabla_nan' must have at least one column.")
-
-            plt.figure(figsize=(15, 8))
-            plt.bar(tabla_nan.index, tabla_nan['pct'])
-            plt.title("Pct NaNs", size=20)
-            plt.xticks(rotation=90)
-            plt.ylabel("Percentage (%)", size=12)
-            plt.xlabel("Columns", size=12)
-            plt.show()
-
-        except TypeError as e:
-            print(f"Error: {e}")
-        except ValueError as e:
-            print(f"Error: {e}")
-        except Exception as e:
-            print(f"Unknown error: {e}")
-
 
     def drop_column(df, column_list):
 
@@ -158,6 +187,70 @@ class Preprocess():
         return df
 
 
+## A PARTIR DE AQUI CLASE HEREDADA
+
+class Read_Preprocess(Preprocess):
+    def __init__(self):
+        super().__init__()
+
+    def file_to_dataframe(path):
+        """This method will be used parse files from several extensions to a pandas dataframe
+
+        :param path to file path: Path to the file with a certain extension to be parsed
+
+        :returns: Dataframe
+
+        :rtype: Pandas Dataframe
+        """
+        extension = path.split('.')[-1].lower()
+
+        if extension == 'json':
+            with open(path, 'r', encoding = 'utf-8') as f:
+                data = json.load(f)
+            df = pd.DataFrame(data)
+
+
+        elif extension == 'csv':
+            df = pd.read_csv(path)
+
+        elif extension in ('xlsx', 'xls'):
+            try:
+                workbook = load_workbook(path, read_only=True, data_only=True)
+                sheet = workbook.active
+                data = sheet.values
+                columns = next(data)
+                df = pd.DataFrame(data, columns=columns)
+            except InvalidFileException:
+                df = pd.read_excel(path, engine='xlrd')
+        
+        elif extension == 'xml':
+            try:
+                tree = ET.parse(path)
+                root = tree.getroot()
+                data = []
+                for child in root:
+                    data.append([child.tag] + [subchild.text for subchild in child])
+                columns = data[0]
+                data = data[1:]
+                df = pd.DataFrame(data, columns=columns)
+            except ET.ParseError:
+                raise ValueError("El archivo XML no contiene datos en formato tabular")
+        
+        elif extension == 'h5':
+            df = pd.read_hdf(path)
+        
+        elif extension == 'txt':
+            try:
+                df = pd.read_csv(path, sep='\t')
+            except pd.errors.ParserError:
+                raise ValueError("El archivo txt no contiene datos en formato tabular")
+
+        else:
+            raise ValueError("Extensión de archivo no compatible")
+        
+        return df
+
+
     def outlier_detection(df, column_list = []):
         """This method will be used to plot and detect outliers from one or more columns
 
@@ -192,127 +285,41 @@ class Preprocess():
             plt.ylabel('Value', size = 12)
             plt.show()  
 
+    def view_nan_graph(tabla_nan):
 
+        """This method is used to graph the missing values of a dataframe.
 
-    def file_to_dataframe(file):
-        """This method will be used parse files from several extensions to a pandas dataframe
+            :param dataframe table_nan: The NaN table obtained from the view_table_nan() method
 
-        :param file file: The file with a certain extension to be parsed
+            :returns: NaN barplot
 
-        :returns: Dataframe
-
-        :rtype: Pandas Dataframe
+            :rtype: dataframe
         """
-        extension = file.split('.')[-1].lower()
-    
-        if extension == 'json':
-            with open(file, 'r', encoding = 'utf-8') as f:
-                data = json.load(f)
-            df = pd.DataFrame(data)
 
-
-        elif extension == 'csv':
-            df = pd.read_csv(file)
-
-        elif extension in ('xlsx', 'xls'):
-            try:
-                workbook = load_workbook(file, read_only=True, data_only=True)
-                sheet = workbook.active
-                data = sheet.values
-                columns = next(data)
-                df = pd.DataFrame(data, columns=columns)
-            except InvalidFileException:
-                df = pd.read_excel(file, engine='xlrd')
-        
-        elif extension == 'xml':
-            try:
-                tree = ET.parse(file)
-                root = tree.getroot()
-                data = []
-                for child in root:
-                    data.append([child.tag] + [subchild.text for subchild in child])
-                columns = data[0]
-                data = data[1:]
-                df = pd.DataFrame(data, columns=columns)
-            except ET.ParseError:
-                raise ValueError("El archivo XML no contiene datos en formato tabular")
-        
-        elif extension == 'h5':
-            df = pd.read_hdf(file)
-        
-        elif extension == 'txt':
-            try:
-                df = pd.read_csv(file, sep='\t')
-            except pd.errors.ParserError:
-                raise ValueError("El archivo txt no contiene datos en formato tabular")
-
-        else:
-            raise ValueError("Extensión de archivo no compatible")
-        
-        return df
-    
-
-    def describe_var(df, variables, tipo_var):
-
-        """This method will be used to describe one or more columns from a dataframe. 
-        The description will be: Count, min, pct 25, mean, median, pct 75, max, std, NaN count and not NaN count
-
-        :param dataframe df: The dataframe from where one or more columns will be described
-        :param list variables: Column or list of columns that will be described
-        :param str tipo_var: Type of columns that will be described, it manages to options, "cat" or "num"
-
-        :returns: dataframe
-
-        :rtype: dataframe
-        """
         try:
-            if tipo_var not in ['num', 'cat']:
-                raise ValueError("El tipo de variable debe ser 'num' para variables numéricas o 'cat' para variables categóricas.")
-            
-            if tipo_var == 'num':
-                for variable in variables:
-                    if df[variable].dtype not in ['int64', 'float64']:
-                        raise TypeError(f"La variable '{variable}' no es numérica.")
-                
-                data = []
-                for variable in variables:
-                    count = df[variable].count()
-                    min_val = df[variable].min()
-                    pct25 = np.nanpercentile(df[variable], 25)
-                    mean = df[variable].mean()
-                    median = df[variable].median()
-                    pct75 = np.nanpercentile(df[variable], 75)
-                    max_val = df[variable].max()
-                    std_dev = df[variable].std()
-                    na_count = df[variable].isna().sum()
-                    notna_count = df[variable].notna().sum()
+            # Verifica si tabla_nan es un DataFrame de pandas
+            if not isinstance(tabla_nan, pd.DataFrame):
+                raise TypeError("Invalid input: 'tabla_nan' must be a pandas DataFrame.")
 
-                    data.append([
-                        count, min_val, pct25, mean, median, pct75, max_val, std_dev, na_count, notna_count
-                    ])
+            # Verifica si hay al menos una columna en el DataFrame
+            if len(tabla_nan.columns) == 0:
+                raise ValueError("Invalid input: 'tabla_nan' must have at least one column.")
 
-                result_df = pd.DataFrame(data, columns=['Count', 'Min', '25th Percentile', 'Mean', 'Median', '75th Percentile', 'Max', 'Std Dev', 'NA Count', 'Not NA Count'], index=variables)
-                return result_df.T
-            
-            elif tipo_var == 'cat':
-                for variable in variables:
-                    if df[variable].dtype not in ['object', 'category']:
-                        raise TypeError(f"La variable '{variable}' no es categórica.")
-                
-                cat_data = []
-                for variable in variables:
-                    count = df[variable].count()
-                    mode_val = df[variable].mode().iloc[0]
-                    mode_freq = df[variable].value_counts().iloc[0]
-                    mode_percentage = (mode_freq / count) * 100
-                    unique_categories = df[variable].nunique()
+            plt.figure(figsize=(15, 8))
+            plt.bar(tabla_nan.index, tabla_nan['pct'])
+            plt.title("Pct NaNs", size=20)
+            plt.xticks(rotation=90)
+            plt.ylabel("Percentage (%)", size=12)
+            plt.xlabel("Columns", size=12)
+            plt.show()
 
-                    cat_data.append([
-                        count, unique_categories, mode_val, mode_freq, mode_percentage
-                    ])
+        except TypeError as e:
+            print(f"Error: {e}")
+        except ValueError as e:
+            print(f"Error: {e}")
+        except Exception as e:
+            print(f"Unknown error: {e}")
 
-                cat_result_df = pd.DataFrame(cat_data, columns=['Count', 'Unique Categories', 'Mode', 'Mode Frequency', 'Mode Percentage'], index=variables)
-                return cat_result_df.T
-        
-        except (ValueError, TypeError) as e:
-           return str(e)
+    
+
+
