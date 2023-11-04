@@ -6,7 +6,13 @@ Estas son las librerías necesarias para ejecutar las funciones de la librería:
 - import matplotlib.pyplot as plt
 - import sklearn.impute import KNNImputer
 - import seaborn as sns
-
+- import json
+- import csv
+- from openpyxl import load_workbook
+- import xlrd
+- from openpyxl.utils.exceptions import InvalidFileException
+- import xml.etree.ElementTree as ET
+- import numpy as np
 
 class preprocess():
 - view_nan_graph(tabla_nan)

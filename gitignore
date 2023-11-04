@@ -1,9 +1,0 @@
-*.csv
-*.excel
-*.json
-*.bat
-*.rst
-_build/
-_static/
-_template/
-conf.py

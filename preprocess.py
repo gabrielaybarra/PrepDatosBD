@@ -2,6 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.impute import KNNImputer
 import seaborn as sns
+import json
+from openpyxl import load_workbook
+from openpyxl.utils.exceptions import InvalidFileException
+import xml.etree.ElementTree as ET
+import numpy as np
+
 
 
 class Preprocess():
@@ -178,7 +184,6 @@ class Preprocess():
             except Exception as e:
                 print(f"Error: Unsupported column. Please check the data.")
 
-
         else:
             plt.figure(figsize = (15,8))
             sns.boxplot(df, orient='v')
@@ -187,3 +192,127 @@ class Preprocess():
             plt.ylabel('Value', size = 12)
             plt.show()  
 
+
+
+    def file_to_dataframe(file):
+        """This method will be used parse files from several extensions to a pandas dataframe
+
+        :param file file: The file with a certain extension to be parsed
+
+        :returns: Dataframe
+
+        :rtype: Pandas Dataframe
+        """
+        extension = file.split('.')[-1].lower()
+    
+        if extension == 'json':
+            with open(file, 'r', encoding = 'utf-8') as f:
+                data = json.load(f)
+            df = pd.DataFrame(data)
+
+
+        elif extension == 'csv':
+            df = pd.read_csv(file)
+
+        elif extension in ('xlsx', 'xls'):
+            try:
+                workbook = load_workbook(file, read_only=True, data_only=True)
+                sheet = workbook.active
+                data = sheet.values
+                columns = next(data)
+                df = pd.DataFrame(data, columns=columns)
+            except InvalidFileException:
+                df = pd.read_excel(file, engine='xlrd')
+        
+        elif extension == 'xml':
+            try:
+                tree = ET.parse(file)
+                root = tree.getroot()
+                data = []
+                for child in root:
+                    data.append([child.tag] + [subchild.text for subchild in child])
+                columns = data[0]
+                data = data[1:]
+                df = pd.DataFrame(data, columns=columns)
+            except ET.ParseError:
+                raise ValueError("El archivo XML no contiene datos en formato tabular")
+        
+        elif extension == 'h5':
+            df = pd.read_hdf(file)
+        
+        elif extension == 'txt':
+            try:
+                df = pd.read_csv(file, sep='\t')
+            except pd.errors.ParserError:
+                raise ValueError("El archivo txt no contiene datos en formato tabular")
+
+        else:
+            raise ValueError("Extensión de archivo no compatible")
+        
+        return df
+    
+
+    def describe_var(df, variables, tipo_var):
+
+        """This method will be used to describe one or more columns from a dataframe. 
+        The description will be: Count, min, pct 25, mean, median, pct 75, max, std, NaN count and not NaN count
+
+        :param dataframe df: The dataframe from where one or more columns will be described
+        :param list variables: Column or list of columns that will be described
+        :param str tipo_var: Type of columns that will be described, it manages to options, "cat" or "num"
+
+        :returns: dataframe
+
+        :rtype: dataframe
+        """
+        try:
+            if tipo_var not in ['num', 'cat']:
+                raise ValueError("El tipo de variable debe ser 'num' para variables numéricas o 'cat' para variables categóricas.")
+            
+            if tipo_var == 'num':
+                for variable in variables:
+                    if df[variable].dtype not in ['int64', 'float64']:
+                        raise TypeError(f"La variable '{variable}' no es numérica.")
+                
+                data = []
+                for variable in variables:
+                    count = df[variable].count()
+                    min_val = df[variable].min()
+                    pct25 = np.nanpercentile(df[variable], 25)
+                    mean = df[variable].mean()
+                    median = df[variable].median()
+                    pct75 = np.nanpercentile(df[variable], 75)
+                    max_val = df[variable].max()
+                    std_dev = df[variable].std()
+                    na_count = df[variable].isna().sum()
+                    notna_count = df[variable].notna().sum()
+
+                    data.append([
+                        count, min_val, pct25, mean, median, pct75, max_val, std_dev, na_count, notna_count
+                    ])
+
+                result_df = pd.DataFrame(data, columns=['Count', 'Min', '25th Percentile', 'Mean', 'Median', '75th Percentile', 'Max', 'Std Dev', 'NA Count', 'Not NA Count'], index=variables)
+                return result_df.T
+            
+            elif tipo_var == 'cat':
+                for variable in variables:
+                    if df[variable].dtype not in ['object', 'category']:
+                        raise TypeError(f"La variable '{variable}' no es categórica.")
+                
+                cat_data = []
+                for variable in variables:
+                    count = df[variable].count()
+                    mode_val = df[variable].mode().iloc[0]
+                    mode_freq = df[variable].value_counts().iloc[0]
+                    mode_percentage = (mode_freq / count) * 100
+                    unique_categories = df[variable].nunique()
+
+                    cat_data.append([
+                        count, unique_categories, mode_val, mode_freq, mode_percentage
+                    ])
+
+                cat_result_df = pd.DataFrame(cat_data, columns=['Count', 'Unique Categories', 'Mode', 'Mode Frequency', 'Mode Percentage'], index=variables)
+                return cat_result_df.T
+        
+        except (ValueError, TypeError) as e:
+           return str(e)
