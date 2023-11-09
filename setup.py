@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
-  name = 'DataPreprocessing',         # How you named your package folder (MyLib)
-  packages = ['DataPreprocessing'],   # Chose the same as "name"
+  name = 'PrepDatosBD',         # How you named your package folder (MyLib)
+  packages = ['PrepDatosBD'],   # Chose the same as "name"
   version = '0.2',      # Start with a small number and increase it with every change you make
   license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'This library aims to simplify and agilize the process of data preprocessing and cleaning, which is critical in any data analysis or machine learning project. By providing a variety of tools and functions, users can work more efficiently and ensure the quality of the data they are working with.',   # Give a short description about your library
