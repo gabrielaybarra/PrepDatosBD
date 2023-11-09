@@ -1,7 +1,7 @@
 # PrepDatosBD
 ## Read, Preprocess and Visualize your data
 
-Esta biblioteca tiene como objetivo simplificar y agilizar el proceso de preprocesamiento y limpieza de datos, lo cual es crucial en cualquier análisis de datos o proyecto de aprendizaje automático. Al proporcionar una variedad de herramientas y funciones, los usuarios pueden trabajar de manera más eficiente y garantizar la calidad de los datos con los que están trabajando.
+This library aims to simplify and agilize the process of data preprocessing and cleaning, which is critical in any data analysis or machine learning project. By providing a variety of tools and functions, users can work more efficiently and ensure the quality of the data they are working with.
 
 ## Required libraries
 ```sh
